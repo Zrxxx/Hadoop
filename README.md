@@ -21,4 +21,19 @@ BigData
     可伸缩性：支持节点的动态加入或退出
 9. HDFS采用了“一次写入、多次读取”的简单文件系统，流操作不适合低延迟数据访问。
 10. 客户端访问文件->名称节点返回文件的位置列表（文件被分为多个块）->根据数据块找出本地文件并返回客户端。
-11. 
+
+
+11. HDFS中，NameNode负责管理分布式文件系统的命名空间namespace，保存了FsImage和EditLog两个数据结构。
+  FsImage用于维持文件系统树以及文件树中所有的文件和文件夹的元数据。
+  EditLog中记录了所有针对文件的创建、删除、重命名等操作。
+12. NameNode启动时，FsImage的内容加载到内存，然后执行EditLog的各项操作，使得内存中的元数据保持最新。
+  这个操作完成后，会创建新的FsImage文件和一个空的EditLog文件。
+13. DataNode是分布式文件系统HDFS的工作节点，负责数据的存储和读取，定期向NameNode发送自己存储块的列表。
+    每个DataNode中的数据会保存在各自节点的本地系统中。
+14. Secondary NameNode有效解决EditLog过大，NameNode长期处在更新阶段而不能写入的问题，
+    功能：完成FsImage与EditLog的合并，减小EditLog文件大小，缩短NameNode重启时间
+         作为NameNode的检查点，保存NameNode中的节点数据。
+15. Secondary NameNode与NameNode通讯，要求其停止使用EditLog文件，然后将该时刻t的最新FsImage和EditLog拉到本地，
+    由Secondary NameNode进行更新，并将更新完的FsImage发回NameNode，该时刻s,NameNode替换发来的FsImage完成所有更新，
+    但s-t时间内，对NameNode的写入操作会缺失。
+16. 
