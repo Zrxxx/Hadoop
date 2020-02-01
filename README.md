@@ -36,4 +36,5 @@ BigData
 15. Secondary NameNode与NameNode通讯，要求其停止使用EditLog文件，然后将该时刻t的最新FsImage和EditLog拉到本地，
     由Secondary NameNode进行更新，并将更新完的FsImage发回NameNode，该时刻s,NameNode替换发来的FsImage完成所有更新，
     但s-t时间内，对NameNode的写入操作会缺失。
-16. 
+16. HDFS采用主/从(master/slave)结构模型，NameNode作为中心服务器，DataNode周期性报告自己的状态，没有报告的标记为宕机
+17. HDFS的存储原理
